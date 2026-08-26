@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overscroll-behavior: none;
+  }
+  /* Safe area para iOS */
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  /* Smooth focus para todos los focusables */
+  *:focus-visible {
+    outline: none;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-slate-900 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 p-4;
+  }
+  /* Botón primario: tinte + press scale + lift al hover */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary text-white font-semibold px-4 py-3 transition-all duration-200 ease-out active:scale-[0.97];
+  }
+  .btn-primary:hover {
+    @apply brightness-110 shadow-md;
+  }
+  .btn-primary:active {
+    @apply brightness-95;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold px-4 py-3 transition-all duration-200 ease-out active:scale-[0.97];
+  }
+  .btn-secondary:hover {
+    @apply bg-slate-200 dark:bg-slate-700;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl text-slate-600 dark:text-slate-300 font-medium px-3 py-2 transition-all duration-200 ease-out active:scale-95;
+  }
+  .btn-ghost:hover {
+    @apply bg-slate-100 dark:bg-slate-800;
+  }
+  .input {
+    @apply w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-accent/20 focus:border-brand-accent;
+  }
+  .label {
+    @apply text-sm font-medium text-slate-600 dark:text-slate-300 mb-1 block;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .badge-success { @apply bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300; }
+  .badge-warning { @apply bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300; }
+  .badge-danger  { @apply bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300; }
+  .badge-neutral { @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300; }
+  .scroll-area {
+    @apply overflow-y-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Hide scrollbar en mobile */
+.scroll-area::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ============================================================================
+   Date input fixes: el ícono nativo del date picker (calendario) es casi
+   invisible en modo oscuro. Aplicamos `color-scheme: dark` para que el
+   picker se adapte al tema + filtro de inversión para que el ícono se
+   vea en ambos temas. (Sigue siendo útil para los <input type="date">
+   nativos que aún quedan; el componente DatePicker usa su propio botón
+   visible.)
+   ============================================================================ */
+.dark input[type='date']::-webkit-calendar-picker-indicator,
+.dark input[type='datetime-local']::-webkit-calendar-picker-indicator,
+.dark input[type='time']::-webkit-calendar-picker-indicator,
+.dark input[type='month']::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  cursor: pointer;
+  opacity: 0.8;
+}
+.dark input[type='date']::-webkit-calendar-picker-indicator:hover,
+.dark input[type='datetime-local']::-webkit-calendar-picker-indicator:hover,
+.dark input[type='time']::-webkit-calendar-picker-indicator:hover,
+.dark input[type='month']::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+input[type='date'],
+input[type='datetime-local'],
+input[type='time'],
+input[type='month'] {
+  color-scheme: light dark;
+}
+.dark input[type='date'],
+.dark input[type='datetime-local'],
+.dark input[type='time'],
+.dark input[type='month'] {
+  color-scheme: dark;
+}
+
+/* ============================================================================
+   Apple-style polish:
+   - Spring/overshoot en los iconos que aparecen (checkbox tilde, etc.)
+   - Press scale sutil en cards interactivas
+   - Hover lift en cards
+   - Transiciones globales más largas y easing curves más naturales
+   ============================================================================ */
+
+/* Cards interactivas: hover lift + active press */
+.card-interactive {
+  @apply transition-all duration-200 ease-out;
+}
+.card-interactive:hover {
+  @apply -translate-y-0.5 shadow-lg;
+}
+.card-interactive:active {
+  @apply scale-[0.995];
+}
+
+/* Easing "spring" para entradas y salidas */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animación genérica de "pop in" (bounce hacia adentro) */
+@keyframes pop-in {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop-in {
+  animation: pop-in 0.28s var(--ease-spring) both;
+}
+
+/* Animación genérica de "fade slide up" (entrada) */
+@keyframes fade-slide-up {
+  0%   { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-fade-up {
+  animation: fade-slide-up 0.25s var(--ease-smooth) both;
+}
+
+/* Pulse suave para badges/indicadores críticos */
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.05); opacity: 0.9; }
+}
+.animate-soft-pulse {
+  animation: soft-pulse 2s ease-in-out infinite;
+}
+
+/* Inputs/buttons: feedback táctil en iOS-style */
+button, [role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sombra "soft" mejorada para modo oscuro */
+.dark .shadow-soft {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Lists: items con hover sutil */
+.list-item-hover {
+  @apply transition-colors duration-150;
+}
+.list-item-hover:hover {
+  @apply bg-slate-50 dark:bg-slate-800/50;
+}
+.list-item-hover:active {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
